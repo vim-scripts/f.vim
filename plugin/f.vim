@@ -19,8 +19,12 @@
 " Suggested mappings:
 " :map <F5> :call F()<CR>
 " :map <F6> :normal zozj<CR>
-"
+" :set backspace=indent,eol,start
+" the above setting allows you to go back/forward with "w","b" etc.
+" thus opening "a bit" a nearby folder
+" 
 " :<Up> to recall the macro after having executed it once
+" giving <Up> as an argument, last searches can be repeated/modified
 "
 " try giving as an expression  nfold
 " try giving as an expression  as
@@ -32,7 +36,7 @@
 " try giving as an expression  ^:endf
 "
 " for remarks, complaints, etc. write to: antonio.colombo@jrc.it
-" version 02062101
+" version 02070801
 
 :fun! Foldft(from,to) range
 "makes folds from "a:from" to "a:to"
@@ -69,6 +73,8 @@
 
 :fun! F() range
 :let arg=input("Which expression? ")
+" for use inside :help
+:set foldenable
 :set foldmethod=manual
 :set foldminlines=0
 :set foldtext=
