@@ -36,9 +36,11 @@
 " try giving as an expression  ^:endf
 "
 " for remarks, complaints, etc. write to: antonio.colombo@jrc.it
-" version 02070801
+" Thanks to Michael Fitz (Wien -AT) and Jean-Marc Frigerio 
+" for corrections, suggestions and enhancements.
+" version 03121201
 
-:fun! Foldft(from,to) range
+:fun! s:Foldft(from,to) range
 "makes folds from "a:from" to "a:to"
 ":echo a:from a:to "fold"
 :let range=a:to-a:from
@@ -73,55 +75,68 @@
 
 :fun! F() range
 :let arg=input("Which expression? ")
+exec "normal /" . arg . "/"
+":nohl
 " for use inside :help
-:set foldenable
-:set foldmethod=manual
-:set foldminlines=0
-:set foldtext=
-:let idx=0
-:let lastline= line("$")
-:let nfold=0
-:norm G$
-:norm zE
-:let fromline=1
-:wh idx<lastline
-:if ( idx==0 ) 
-:let num=search(arg)
-:else
-:let num=search(arg,"W")
-:en
-" search gives back the column number...
-:if ( num==0 )
-:break
-:en
-:if ( num!=0 ) 
-"" to avoid wrapping around
-":if idx>line(".") 
-":break
-":en
-:let toline=num-1
-:if toline>=fromline
-:call Foldft(fromline,toline)
-:let nfold=nfold+1
-:en
-:let fromline=num+1
-":echo "line" num "found" arg "at col" col(".")
-":echo "----+----1----+----2----+----3----+----4----+----5----+----6----+-----7"
-":p
-:norm $
-:let idx=line(".")
-:en
-:endw
-:if fromline<=lastline && fromline!=1
-:let toline=lastline
-:call Foldft(fromline,toline)
-:let nfold=nfold+1
-:en
-:norm 1G
-:call histadd(":","call F()")
-:if nfold>0
-:call histadd("/",arg)
-:else
-:echo "Expression not found:" arg
-:en
+set foldenable
+set foldmethod=manual
+set foldminlines=0
+set foldtext=
+let idx=0
+let lastline= line("$")
+let nfold=0
+let nFound=0
+let nLines=0
+norm G$
+norm zE
+let fromline=1
+while idx<lastline
+  if ( idx==0 ) 
+    let num=search(arg)
+  else
+    let num=search(arg,"W")
+  endif
+  " search gives back the column number...
+  if ( num==0 )
+    break
+  endif
+  if ( num!=0 ) 
+    let nFound=1
+    let toline=num-1
+    if toline>=fromline
+      call s:Foldft(fromline,toline)
+      let nfold=nfold+1
+    en
+    let fromline=num+1
+    ":echo "line" num "found" arg "at col" col(".")
+    ":echo "----+----1----+----2----+----3----+----4----+----5----+----6----+-----7"
+    ":p
+    let nLines=nLines+1
+    norm $
+    let idx=line(".")
+  endif
+endwhile
+if fromline<=lastline && fromline!=1
+  let toline=lastline
+  call s:Foldft(fromline,toline)
+  let nfold=nfold+1
+en
+norm 1G
+if (nFound)
+  call histadd("/",arg)
+  exec "normal" "/" . arg . "/"
+  exec "match Search /\\c" . arg . "/"
+  if (!nfold)
+    echo "Expression on each line:" arg
+  endif
+  if ( nLines>1 )
+    echo nLines "lines found"
+  else
+    echo nLines "line found"
+  endif
+  return ("/" . arg . "/")
+else
+  echo "Expression not found:" arg
+  return ("")
+endif
 :endf
