@@ -16,12 +16,25 @@
 " If you have 2 adjacent folders, zf<ENTER> will 'merge' them.
 " In the same way a visible line can be 'added' to a nearby folder.
 "
+" :call FA()
+" This function is similar to F() above, except instead of typing in
+" a regular expression, the current word the cursor is over is used as
+" the regular expression.
+"
+" The function FA() has been prepared and added by:
+" Ken Huisman - ken.huisman@gmail.com
+"
 " Suggested mappings:
 " :map <F5> :call F()<CR>
 " :map <F6> :normal zozj<CR>
 " :set backspace=indent,eol,start
 " the above setting allows you to go back/forward with "w","b" etc.
 " thus opening "a bit" a nearby folder
+"
+" :map <F1> :call FA()<CR>
+" :map <F2> zR
+" useful for finding all instances of the current word quickly and then
+" opening all the folds when you are done.
 " 
 " :<Up> to recall the macro after having executed it once
 " giving <Up> as an argument, last searches can be repeated/modified
@@ -73,8 +86,8 @@
 :endw
 :endf
 
-:fun! F() range
-:let arg=input("Which expression? ")
+:fun! F2(larg) range
+:let arg=a:larg
 exec "normal /" . arg . "/"
 ":nohl
 " for use inside :help
@@ -139,4 +152,17 @@ else
   echo "Expression not found:" arg
   return ("")
 endif
+:endf
+
+:fun! FA() range
+:let arg=expand("<cword>")
+:let linenum=line(".")
+:let colnum=col(".")
+call F2(arg)
+call cursor(linenum,colnum)
+:endf
+
+:fun! F() range
+:let arg=input("Which expression? ")
+call F2(arg)
 :endf
