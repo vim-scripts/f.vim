@@ -48,10 +48,11 @@
 " try giving as an expression  :endf
 " try giving as an expression  ^:endf
 "
-" for remarks, complaints, etc. write to: antonio.colombo@jrc.it
-" Thanks to Michael Fitz (Wien -AT) and Jean-Marc Frigerio 
+" for remarks, complaints, etc. write to: azc100@gmail.com
+" Thanks to Michael Fitz (Wien -AT), Jean-Marc Frigerio
+" and Alexander Langer
 " for corrections, suggestions and enhancements.
-" version 03121201
+" version 05042001
 
 :fun! s:Foldft(from,to) range
 "makes folds from "a:from" to "a:to"
