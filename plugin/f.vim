@@ -4,6 +4,9 @@
 "
 " The remaining lines are folded with the manual method,
 " and can be opened to see some 'nearby' line.
+" 
+" If no regular expression is specified, the last regular expression
+" speicified for search is utilized.
 "
 " The idea comes from the mainframe ISPF editor.
 "
@@ -50,9 +53,9 @@
 "
 " for remarks, complaints, etc. write to: azc100@gmail.com
 " Thanks to Michael Fitz (Wien -AT), Jean-Marc Frigerio
-" and Alexander Langer
+" Alexander Langer, and Paul Wei
 " for corrections, suggestions and enhancements.
-" version 05042001
+" version 05051001
 
 :fun! s:Foldft(from,to) range
 "makes folds from "a:from" to "a:to"
@@ -165,5 +168,8 @@ call cursor(linenum,colnum)
 
 :fun! F() range
 :let arg=input("Which expression? ")
+if strlen(arg)<1
+:let arg=@/
+endif
 call F2(arg)
 :endf
